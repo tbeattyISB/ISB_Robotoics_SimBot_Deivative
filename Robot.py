@@ -57,7 +57,7 @@ class Player(object):
     def __init__(self, x, y, window):
         self.__x = x
         self.y = y
-        self.mass = 200
+        self.mass = 800
         self.__v = 0
         self.power = 0
         self.error = 0
@@ -72,16 +72,14 @@ class Player(object):
 
     def draw(self):
         # Force = motor - friction - resistance
-        fric = self.mass / 10
+        fric = self.mass / 100
         totalAccel = (0.2 * math.copysign(math.pow(self.power, 2), self.power) - math.copysign(fric,
-                                                                                               self.__v or self.power) - 2 * math.copysign(
+                                                                                               self.__v or self.power) - 1 * math.copysign(
             math.pow(self.__v, 2), self.__v)) / self.mass
         self.__v = self.__v + totalAccel
-        if (abs(self.power) < 10 and abs(self.__v) < 5):
+        if (abs(self.power) < 5 and abs(self.__v) < 2):
             self.__v = 0
             if (self.stopped == False):
-                print(
-                    f'{round(self.ultrasonic_sensor())}px at {(pygame.time.get_ticks() - self.start) / 1000:.2f} seconds')
                 self.stopped = True
         else:
             self.stopped = False
@@ -103,14 +101,13 @@ class Player(object):
         if (self.start == 0):
             self.start = pygame.time.get_ticks()
         pygame.time.wait(time)
-        print(f'{round(self.ultrasonic_sensor())}px at {(pygame.time.get_ticks() - self.start) / 1000:.2f} seconds')
 
     def setPayload(self, mass):
         if (mass < 0):
             mass = 0
         if (mass > 500):
             mass = 500
-        self.mass = 200 + mass
+        self.mass = 800 + mass
 
     def ultrasonic_sensor(self):
         return self.sensor
@@ -180,6 +177,7 @@ class MainRun(object):
             wall.draw()
             graph.addData(player.ultrasonic_sensor())
             graph.update()
+            pygame.draw.line(self.window, (150, 150, 255), (wallPos - 250, 30), (wallPos - 250,200), 3)
 
             # Remember to update your clock and display at the end
             pygame.display.update()
